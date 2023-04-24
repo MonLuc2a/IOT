@@ -4,51 +4,38 @@ Projet Arduino 1 : Porte de garage sécurisée
 Description du projet :
 Ce projet consiste à créer un système de contrôle d'accès pour une porte de garage sécurisée, en utilisant une carte Arduino. Le système doit permettre l'ouverture et la fermeture de la porte via différents modes d'authentification, tout en assurant la sécurité des biens et des personnes. Il doit également informer les utilisateurs de l'état du système et envoyer des notifications en cas d'événements importants.
 
-Matériel requis :
 
-Carte Arduino (Uno, Mega, etc.)
-Module RFID (RC522)
-Détecteur de proximité (HC-SR04)
-Capteur de force (pour détecter la fermeture complète de la porte)
-Moteur pas-à-pas ou moteur à courant continu avec contrôleur
-Module relais pour contrôler le moteur
-Sirène ou klaxon
-LEDs pour indicateurs lumineux
-Haut-parleur ou buzzer pour signaux sonores
-Module Wi-Fi ou Ethernet (ESP8266, ESP32 ou W5100)
-Alimentation électrique
-Télécommande ou application pour smartphone
-Fils de connexion et breadboard
-Fonctionnalités :
+Le contrôle d'accès est essentiel pour assurer la sécurité et la confidentialité des espaces et des ressources. Ce projet utilise un ensemble de capteurs et d'actuateurs pour créer un système de contrôle d'accès flexible et polyvalent. Les principales fonctionnalités du système comprennent :
 
-Plan :
+Enregistrement des informations d'accès dans la mémoire vive (EEPROM)
+Contrôle d'un élément motorisé (ex. verrou électrique)
+Mécanisme d'autocontrôle basé sur un capteur à ultrasons
+Détection de toucher tactile avec un capteur capacitif
+Interaction avec un ordinateur pour visualiser l'historique des accès
 
-Contrôle d'accès avec badge RFID
-Utilisez un lecteur RFID comme le module MFRC522 et une carte RFID compatible.
-Installez la bibliothèque MFRC522 pour Arduino.
-Écrivez un code pour lire l'UID (identifiant unique) des cartes RFID.
+Matériel utilisé :
 
-Klaxon
-Utilisez un capteur de son pour détecter le klaxon de la voiture.
-Écrivez un code pour détecter le niveau sonore et déclencher l'ouverture de la porte lorsque le klaxon est détecté.
+Arduino Uno ou compatible
+Module RFID MFRC522
+Capteur à ultrasons HC-SR04
+Capteur tactile capacitif
+LED et résistances appropriées
+Transistor et diode pour contrôler un moteur ou un verrou électrique
+Câbles de connexion et breadboard
 
-Approche de la bonne voiture
-Utilisez un module Bluetooth (par exemple, HC-05 ou HC-06) pour détecter la présence de la voiture.
-Écrivez un code pour établir une connexion Bluetooth entre la voiture et le système Arduino et déclencher l'ouverture de la porte.
+Logiciel utilisé :
 
-Télécommande
-Utilisez un récepteur infrarouge et une télécommande compatible.
-Installez la bibliothèque IRremote pour Arduino.
-Écrivez un code pour recevoir des signaux infrarouges et déclencher l'ouverture de la porte.
+IDE Arduino
+Bibliothèques Arduino : SPI, MFRC522, EEPROM, TimeLib
 
-Sécurité anti-vol
-Utilisez un capteur PIR (détecteur de mouvement) pour détecter des mouvements suspects près de la porte.
-Écrivez un code pour déclencher une alarme ou envoyer une notification en cas de mouvement détecté.
+Fonctionnement du système :
 
-Détection d'anomalies
-Utilisez des capteurs de fin de course ou des capteurs à ultrasons pour détecter la position de la porte.
-Écrivez un code pour vérifier si la porte est complètement ouverte, fermée, bloquée ou si le moteur est en panne.
+Le système fonctionne en suivant un cycle d'états, où chaque état représente une étape du processus de contrôle d'accès. Les états sont :
 
-Interface utilisateur
-Utilisez des LEDs, des buzzers ou un écran LCD pour afficher l'état du système.
-Écrivez un code pour mettre à jour l'affichage en fonction de l'état du système.
+CHECK_RFID : Vérifie si une carte RFID est présente et si l'ID de la carte correspond à l'ID autorisé.
+CHECK_ULTRASONIC : Utilise le capteur à ultrasons pour détecter la proximité d'un objet et active l'élément motorisé si les conditions sont remplies.
+CHECK_TOUCH_SENSOR : Vérifie si le capteur tactile est activé et effectue des actions en conséquence.
+CHECK_USER_INPUT : Attend les entrées de l'utilisateur via l'ordinateur pour afficher l'historique des accès ou quitter le programme.
+
+
+Ce projet de contrôle d'accès offre une solution polyvalente et adaptable pour sécuriser les espaces et les ressources. Les différentes fonctionnalités peuvent être étendues ou modifiées en fonction des besoins spécifiques, et le système peut être intégré à d'autres dispositifs de sécurité ou de surveillance pour créer une solution de sécurité complète.
