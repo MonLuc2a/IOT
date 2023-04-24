@@ -33,8 +33,11 @@ Fonctionnement du système :
 Le système fonctionne en suivant un cycle d'états, où chaque état représente une étape du processus de contrôle d'accès. Les états sont :
 
 CHECK_RFID : Vérifie si une carte RFID est présente et si l'ID de la carte correspond à l'ID autorisé.
+
 CHECK_ULTRASONIC : Utilise le capteur à ultrasons pour détecter la proximité d'un objet et active l'élément motorisé si les conditions sont remplies.
+
 CHECK_TOUCH_SENSOR : Vérifie si le capteur tactile est activé et effectue des actions en conséquence.
+
 CHECK_USER_INPUT : Attend les entrées de l'utilisateur via l'ordinateur pour afficher l'historique des accès ou quitter le programme.
 
 
