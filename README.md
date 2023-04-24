@@ -41,6 +41,6 @@ Le système suit un cycle d'états, où chaque état représente une étape du p
 Ce projet de contrôle d'accès offre une solution polyvalente et adaptable pour sécuriser les espaces et les ressources. Les différentes fonctionnalités peuvent être étendues ou modifiées en fonction des besoins spécifiques, et le système peut être intégré à d'autres dispositifs de sécurité ou de surveillance pour créer une solution de sécurité complète.
 
 
-##Shéma
+## Shéma
 
 ![shéma](Untitled_Workspace.png)
