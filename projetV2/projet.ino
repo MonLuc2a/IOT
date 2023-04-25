@@ -1,3 +1,9 @@
+#include "SPI.h"
+#include "MFRC522.h"
+#include <EEPROM.h>
+#include <TimeLib.h>
+//#include <CapSense.h>
+
 // Définir les broches pour le lecteur RFID
 #define RST_PIN 9
 #define SS_PIN  10
@@ -7,13 +13,15 @@ const int pingPin = 2;        // Trigger Pin du capteur à ultrasons
 const int echoPin = 7;        // Echo Pin du capteur à ultrasons
 const int ledPin = 4;
 const int motorPin = 3;
-const int touchSensorPin = A0;
+
+const int buttonPin = 5;
+unsigned long motorStartTime = 0;
 
 int eepromAddress = 0;        // Adresse pour l'enregistrement dans l'EEPROM
 
 // Variables pour le lecteur RFID
 byte readCard[4];
-String cardID = "85C85183";
+String cardID = "80712FA5";
 String tagID = "";
 
 bool motorState = false;      // État du moteur (activé ou désactivé)
@@ -25,7 +33,7 @@ enum State {
   CHECK_RFID,
   CHECK_ULTRASONIC,
   CHECK_TOUCH_SENSOR,
-  CHECK_USER_INPUT
+
 };
 
 State currentState;
@@ -40,49 +48,50 @@ void setup() {
   pinMode(echoPin, INPUT);
   pinMode(ledPin, OUTPUT);
   pinMode(motorPin, OUTPUT);
-  pinMode(touchSensorPin, INPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
 
   setTimeAndDate();           // Définir l'heure et la date
 
-  currentState = CHECK_USER_INPUT;  
+  delay(1000);
+
+  currentState = CHECK_RFID;  
 }
 
 void loop() {
+  checkUserInput();
+  StopMotor();
+  //checkTouchSensor();
   // Exécuter la fonction correspondant à l'état actuel
   switch (currentState) {
     case CHECK_RFID:
       checkRFID();
+      
       currentState = CHECK_ULTRASONIC;
+      //Serial.println("CHECK_RFID");
       break;
     case CHECK_ULTRASONIC:
-      checkUltrasonic();
-      currentState = CHECK_TOUCH_SENSOR;
-      break;
-    case CHECK_TOUCH_SENSOR:
-      checkTouchSensor();
+      checkUltrasonic();     
       currentState = CHECK_RFID;
+      //Serial.println("CHECK_ULTRASONIC");
       break;
-    case CHECK_USER_INPUT:
-      checkUserInput();
-      currentState = CHECK_RFID;
-      break;
+    delay(100);
   }
 }
 
 // Vérifier si une carte RFID est détectée et si l'ID correspond
 void checkRFID() {
-  while (getID()) {
+  mfrc522.PCD_Init();
+  if (getID()) {
     if (tagID == cardID) {
-      Serial.println("Access Granted!");
       digitalClockDisplay("Access Granted");
       digitalWrite(4, LOW);
       digitalWrite(8, HIGH);
       motorState = true;
-    } else {
-      Serial.println("Access Denied!");
+      motorStartTime = millis();
+    } else {     
       digitalClockDisplay("Access Denied");
       digitalWrite(4, HIGH);
-      delay(1000);
+      //delay(1000);
     }
 
     Serial.print("ID: ");
@@ -135,22 +144,11 @@ void checkUltrasonic() {
     motorState = false; // Désactiver le moteur
     digitalWrite(motorPin, LOW);
   }
-  delay(100);
 }
 
 // Convertir la durée en microsecondes en centimètres
 long microsecondsToCentimeters(long microseconds) {
   return microseconds / 29 / 2;
-}
-
-// Vérifier l'état du capteur tactile
-void checkTouchSensor() {
-  int touchValue = analogRead(touchSensorPin);
-  if (touchValue > 512) { // Seuil arbitraire, à ajuster en fonction de vos besoins
-    // Faites quelque chose lorsque le capteur tactile est activé
-    Serial.println("Touch Sensor Activated");
-    // Ajoutez ici les actions que vous souhaitez effectuer lorsque le capteur tactile est activé
-  }
 }
 
 // Écrire les données dans l'EEPROM
@@ -181,7 +179,7 @@ void digitalClockDisplay(String access_status) {
 // Définir l'heure et la date
 void setTimeAndDate() {
   // Définissez ici l'heure et la date actuelles
-  setTime(14, 30, 0, 24, 4, 2023);
+  setTime(9, 00, 0, 25, 4, 2023);
 }
 
 // Vérifier les entrées de l'utilisateur
@@ -207,5 +205,16 @@ void displayAccessHistory() {
     }
   }
   Serial.println("End of access history.");
+}
+
+void StopMotor() {
+  int buttonState = digitalRead(buttonPin);
+  unsigned long currentTime = millis();
+  if (buttonState == LOW || (motorState && currentTime - motorStartTime >= 5000)) {
+    motorState = false;
+    digitalWrite(motorPin, LOW);
+    digitalWrite(8, LOW); 
+    currentState = CHECK_RFID; 
+  }
 }
 
