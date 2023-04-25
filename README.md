@@ -14,32 +14,50 @@ Le projet utilise un ensemble de capteurs et d'actuateurs pour créer un systèm
 
 ## Matériel requis
 
-- Arduino Uno ou compatible
-- Module RFID MFRC522
+- Arduino Uno
 - Capteur à ultrasons HC-SR04
-- Capteur tactile capacitif
-- LED et résistances appropriées
-- Transistor et diode pour contrôler un moteur ou un verrou électrique
-- Câbles de connexion et breadboard
+- Lecteur RFID MFRC522
+- Moteur
+- Résistances
+- Fils de connexion
 
-## Logiciel requis
+## Broches utilisées
 
-- IDE Arduino
-- Bibliothèques Arduino : SPI, MFRC522, EEPROM, TimeLib
+- Broche 2: Trigger Pin du capteur à ultrasons
+- Broche 3: Broche de commande du moteur
+- Broche 4: Broche LED
+- Broche 5: Bouton d'arrêt du moteur
+- Broche 7: Echo Pin du capteur à ultrasons
+- Broche 8: LED pour indiquer l'état du verrou
+- Broche 9: RST_PIN pour le lecteur RFID
+- Broche 10: SS_PIN pour le lecteur RFID
 
-## Fonctionnement du système
+## Fonctionnement
 
-Le système suit un cycle d'états, où chaque état représente une étape du processus de contrôle d'accès. Les états sont :
+1. Le système vérifie si une carte RFID est détectée et si l'ID correspond à l'ID autorisé.
+2. Si la carte RFID est autorisée, le système active la LED et le moteur pendant 5 secondes ou jusqu'à ce que le bouton d'arrêt soit appuyé.
+3. Le capteur à ultrasons mesure la distance et, si la distance est supérieure à 10 cm, la LED s'éteint et le moteur s'arrête si nécessaire.
+4. Les données d'accès, y compris les horodatages, sont enregistrées dans l'EEPROM de l'Arduino.
 
-1. CHECK_RFID : Vérifie si une carte RFID est présente et si l'ID de la carte correspond à l'ID autorisé.
-2. CHECK_ULTRASONIC : Utilise le capteur à ultrasons pour détecter la proximité d'un objet et active l'élément motorisé si les conditions sont remplies.
-3. CHECK_TOUCH_SENSOR : Vérifie si le capteur tactile est activé et effectue des actions en conséquence.
-4. CHECK_USER_INPUT : Attend les entrées de l'utilisateur via l'ordinateur pour afficher l'historique des accès ou quitter le programme.
+## Fonctions principales
 
-## Conclusion
+- `checkRFID()`: Vérifie si une carte RFID est détectée et si l'ID correspond.
+- `getID()`: Lit l'ID de la carte RFID.
+- `checkUltrasonic()`: Vérifie la distance mesurée par le capteur à ultrasons.
+- `microsecondsToCentimeters(long microseconds)`: Convertit la durée en microsecondes en centimètres.
+- `writeToEEPROM(String data)`: Écrit les données dans l'EEPROM.
+- `digitalClockDisplay(String access_status)`: Affiche l'horodatage et le statut d'accès.
+- `setTimeAndDate()`: Définit l'heure et la date.
+- `checkUserInput()`: Vérifie les entrées de l'utilisateur.
+- `displayAccessHistory()`: Affiche l'historique d'accès stocké dans l'EEPROM.
+- `StopMotor()`: Arrête le moteur lorsque le bouton d'arrêt est appuyé ou après 5 secondes.
 
-Ce projet de contrôle d'accès offre une solution polyvalente et adaptable pour sécuriser les espaces et les ressources. Les différentes fonctionnalités peuvent être étendues ou modifiées en fonction des besoins spécifiques, et le système peut être intégré à d'autres dispositifs de sécurité ou de surveillance pour créer une solution de sécurité complète.
+## Utilisation
 
+1. Téléversez le code sur l'Arduino.
+2. Connectez tous les composants selon les broches mentionnées ci-dessus.
+3. Ouvrez le moniteur série et réglez la vitesse de transmission à 9600 bauds.
+4. Lorsqu'une carte RFID autorisée est détectée, le système affiche "Access Granted"
 
 ## Shéma
 
